@@ -1,0 +1,56 @@
+
+import subprocess
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+
+# Set path to the most recent capture file
+capture_dir = os.path.expanduser("~/packet-sniffer-dashboard/captures")
+files = sorted(
+    [os.path.join(capture_dir, f) for f in os.listdir(capture_dir)],
+    key=os.path.getmtime,
+    reverse=True
+)
+pcap_file = files[0]  # Most recent file
+
+# Run tshark to get protocol stats
+print(f"[*] Analyzing {pcap_file}")
+cmd = [
+    "tshark", "-r", pcap_file,
+    "-q", "-z", "io,phs"
+]
+
+result = subprocess.run(cmd, stdout=subprocess.PIPE, text=True)
+
+# Parse output
+lines = result.stdout.splitlines()
+start = False
+data = []
+
+for line in lines:
+    if "Protocol Hierarchy Statistics" in line:
+        start = True
+    elif start and line.strip() == "":
+        break
+    elif start and "|" in line:
+        parts = line.split()
+        protocol = parts[0].split("|")[-1]
+        percent = float(parts[-2].replace("%", ""))
+        data.append((protocol, percent))
+
+# Create DataFrame
+df = pd.DataFrame(data, columns=["Protocol", "Percentage"])
+df.to_csv("protocol_summary.csv", index=False)
+print("[+] CSV saved as protocol_summary.csv")
+
+# Plot
+plt.figure(figsize=(10, 6))
+plt.bar(df["Protocol"], df["Percentage"], color="skyblue")
+plt.title("Protocol Usage Breakdown")
+plt.ylabel("Traffic Percentage")
+plt.xlabel("Protocol")
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.savefig("protocol_chart.png")
+print("[+] Bar chart saved as protocol_chart.png")
+plt.show()
