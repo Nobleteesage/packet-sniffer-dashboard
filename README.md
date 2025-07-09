@@ -13,3 +13,4 @@ A Kali Linux project that captures and analyzes network traffic using Wireshark'
 - Kali Linux
 - Python 3
 - TShark (CLI version of Wireshark
+![Protocol Chart](Screenshot_2025-07-09_08-56-33.png)
