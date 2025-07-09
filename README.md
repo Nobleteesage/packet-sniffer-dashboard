@@ -1,9 +1,15 @@
 # Packet Sniffer Dashboard
 
-A Kali Linux project that captures network traffic using Wireshark (tshark) and visualizes protocol data using Python.
+A Kali Linux project that captures and analyzes network traffic using Wireshark's CLI tool (TShark).
 
-## How to Use
+## Features
+- Real-time packet capture using TShark
+- Saves `.pcap` files automatically to a timestamped folder
+- Analyzes protocol distribution using `pandas`
+- Generates visualization charts using `matplotlib`
+- Lightweight and CLI-based
 
-1. Activate the virtual environment:
-   ```bash
-   source venv/bin/activate
+## Requirements
+- Kali Linux
+- Python 3
+- TShark (CLI version of Wireshark
